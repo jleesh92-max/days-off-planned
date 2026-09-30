@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Days off, planned: leave planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2EF; --surface:#FFFFFF; --ink:#16302A; --ink-2:#4D625B; --line:#D3DDD8;
+  --work:#DCE5E0; --rest:#B9C9C1; --hol:#E3A21A; --hol-soft:#FBEBC6; --hol-ink:#6E4A00;
+  --sub:#F0C766; --al:#4B3FC4; --al-soft:#E6E3FB; --closure:#7F948B; --danger:#B3261E; --ok:#1F7A4D;
+  --display:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --body:'Figtree', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1D19; --surface:#162823; --ink:#E6EEEA; --ink-2:#A3B5AE; --line:#2A403A;
+    --work:#1F352E; --rest:#35504A; --hol:#F0B43A; --hol-soft:#3B3117; --hol-ink:#F7D58A;
+    --sub:#B8913A; --al:#9D93FF; --al-soft:#2A2656; --closure:#6C8078; --danger:#FF8A80; --ok:#6FD19C;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1D19; --surface:#162823; --ink:#E6EEEA; --ink-2:#A3B5AE; --line:#2A403A;
+  --work:#1F352E; --rest:#35504A; --hol:#F0B43A; --hol-soft:#3B3117; --hol-ink:#F7D58A;
+  --sub:#B8913A; --al:#9D93FF; --al-soft:#2A2656; --closure:#6C8078; --danger:#FF8A80; --ok:#6FD19C;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;}
+button,input,select,textarea{font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--al);outline-offset:2px;}
+.wrap{max-width:1320px;margin:0 auto;padding:28px 24px 56px;}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,56px);line-height:1;letter-spacing:-.02em;margin:0;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;}
+.ctl{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--ink-2);font-weight:600;}
+select,input[type=date],input[type=number],input[type=text],textarea{
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;font-weight:500;
+}
+.intro{margin:10px 0 0;color:var(--ink-2);font-size:15.5px;max-width:52ch;}
+.budget{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 10px;max-width:760px;}
+.budget label{font-weight:700;display:flex;align-items:center;gap:8px;}
+.budget input{width:70px;}
+.budget .hint{flex-basis:100%;}
+.lede{font-family:var(--display);font-weight:500;font-size:clamp(19px,2.2vw,25px);line-height:1.3;max-width:62ch;margin:22px 0 8px;}
+.lede strong{font-weight:700;}
+.meta{font-size:13px;color:var(--ink-2);margin:0 0 18px;}
+.meta .warn{color:var(--danger);font-weight:600;}
+
+/* ribbon */
+.ribbon-box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 8px;}
+.ribbon-scroll{overflow-x:auto;}
+.ribbon-scroll svg{display:block;min-width:960px;width:100%;height:auto;}
+.ribbon-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);padding:8px 4px 2px;}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:6px;}
+.arc{cursor:pointer;}
+.arc path{fill:none;stroke:var(--al);stroke-width:2;}
+.arc text{fill:var(--al);font-family:var(--body);font-size:13px;font-weight:700;}
+.arc:hover path,.arc:focus path{stroke-width:3.5;}
+.arc:focus{outline:none;}
+
+/* main grid */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:20px;margin-top:20px;align-items:start;}
+@media (max-width:980px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.card-head h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--paper);}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink-2);}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);}
+.nav{display:flex;align-items:center;gap:6px;}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:16px;}
+
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
+.dow{font-size:12px;font-weight:700;color:var(--ink-2);padding:8px 10px;border-bottom:1px solid var(--line);}
+.cell{min-height:96px;padding:7px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;cursor:pointer;text-align:left;background:transparent;border-top:0;border-left:0;display:flex;flex-direction:column;gap:3px;align-items:stretch;}
+.cell:nth-child(7n){border-right:0;}
+.cell.out{background:var(--paper);color:var(--ink-2);cursor:default;}
+.cell.rest{background:color-mix(in srgb,var(--rest) 28%,var(--surface));}
+.cell .n{font-weight:700;font-size:13px;}
+.cell.today .n{color:var(--al);text-decoration:underline;text-underline-offset:3px;}
+.tag{font-size:11.5px;line-height:1.25;padding:2px 6px;border-radius:5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;}
+.tag.ph{background:var(--hol);color:#241800;}
+.tag.sub{background:var(--hol-soft);color:var(--hol-ink);border:1px dashed var(--hol);}
+.tag.proj{background:repeating-linear-gradient(135deg,var(--hol-soft) 0 5px,transparent 5px 9px);color:var(--hol-ink);border:1px dashed var(--hol);}
+.tag.closure{background:var(--closure);color:#fff;}
+.cell.sel{box-shadow:inset 0 -4px 0 var(--al);}
+.cell.sel.cost{background:var(--al-soft);}
+.cell .alpip{position:absolute;top:7px;right:8px;font-size:11px;font-weight:700;color:var(--al);}
+
+/* agenda */
+.agenda{list-style:none;margin:0;padding:0;}
+.agenda li{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);}
+.agenda .d{font-family:var(--display);font-weight:800;font-size:22px;line-height:1;}
+.agenda .d small{display:block;font-family:var(--body);font-weight:600;font-size:12px;color:var(--ink-2);}
+.agenda .nm{font-weight:600;}
+.agenda .sub2{font-size:12.5px;color:var(--ink-2);}
+.pill{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;}
+.pill.c{background:var(--hol);color:#241800;}
+.pill.p{border:1px dashed var(--hol);color:var(--hol-ink);}
+.pill.d{background:var(--hol-soft);color:var(--hol-ink);}
+.pill.x{background:var(--closure);color:#fff;}
+.empty{padding:28px 18px;color:var(--ink-2);}
+
+/* side panel */
+.tabs{display:flex;border-bottom:1px solid var(--line);}
+.tabs button{flex:1;border:0;background:transparent;padding:13px 8px;font-weight:700;font-size:14px;color:var(--ink-2);cursor:pointer;border-bottom:3px solid transparent;}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--al);}
+.pane{padding:18px;display:flex;flex-direction:column;gap:14px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.big{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;color:var(--al);}
+.result{background:var(--al-soft);border-radius:12px;padding:16px;}
+.result p{margin:6px 0 0;}
+.breakdown{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;}
+.breakdown span{background:var(--surface);border-radius:6px;padding:3px 8px;}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:8px 14px;font-weight:600;cursor:pointer;}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.btn.danger{color:var(--danger);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;}
+.hint{font-size:12.5px;color:var(--ink-2);margin:0;}
+.bridges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.bridges button{width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;}
+.bridges button:hover{border-color:var(--al);}
+.bridges .ratio{grid-row:span 2;font-family:var(--display);font-weight:800;font-size:22px;color:var(--al);min-width:74px;}
+.bridges .when{font-weight:600;}
+.bridges .why{font-size:12.5px;color:var(--ink-2);}
+h3{font-family:var(--display);font-size:17px;margin:4px 0 0;}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+summary{cursor:pointer;font-weight:700;}
+details p,details li{font-size:13.5px;color:var(--ink-2);}
+.table{width:100%;border-collapse:collapse;font-size:13px;}
+.table td{border-top:1px solid var(--line);padding:7px 4px;vertical-align:top;}
+.table .acts{display:flex;gap:4px;flex-wrap:wrap;}
+.table .acts button{font-size:12px;padding:3px 7px;border-radius:6px;border:1px solid var(--line);background:var(--surface);cursor:pointer;}
+.scrollbox{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:10px;}
+.stat{display:flex;justify-content:space-between;font-size:13.5px;border-bottom:1px dashed var(--line);padding:4px 0;}
+.checks{display:flex;gap:12px;flex-wrap:wrap;font-size:13.5px;}
+.log{list-style:none;margin:0;padding:0;font-size:12.5px;color:var(--ink-2);}
+.log li{padding:5px 0;border-bottom:1px solid var(--line);}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.toast.show{opacity:1;}
+.foot{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.foot p{font-size:13.5px;color:var(--ink-2);margin:6px 0 0;max-width:60ch;}
+@media (max-width:640px){
+  .wrap{padding:20px 14px 40px;}
+  .cell{min-height:64px;padding:5px;}
+  .tag{font-size:10px;padding:1px 4px;}
+  .agenda li{grid-template-columns:52px 1fr;}
+  .agenda li .pill{grid-column:2;justify-self:start;}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Days off, planned</h1><p class="intro">See your public holidays, find the long breaks worth taking, and plan leave before you apply.</p></div>
+    <div class="controls">
+      <label class="ctl">Where you work<select id="place"></select></label>
+      <label class="ctl">Work week<select id="pattern">
+        <option value="mon-fri">Mon to Fri</option>
+        <option value="mon-sat">Mon to Sat</option>
+        <option value="sun-thu">Sun to Thu</option>
+        <option value="tue-sat">Tue to Sat</option>
+      </select></label>
+      <label class="ctl">Year<select id="year"></select></label>
+    </div>
+  </div>
+
+  <p class="lede" id="lede">Loading holidays…</p>
+  <div class="budget" id="budget"></div>
+  <p class="meta" id="meta"></p>
+
+  <section class="ribbon-box" aria-label="Year at a glance">
+    <div class="ribbon-scroll"><svg id="ribbon" viewBox="0 0 1120 230" role="img" aria-label="Every day of the year, with holidays and suggested breaks"></svg></div>
+    <div class="ribbon-legend">
+      <span><i class="sw" style="background:var(--hol)"></i>Public holiday</span>
+      <span><i class="sw" style="background:var(--sub)"></i>In lieu (derived)</span>
+      <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--hol) 0 2px,transparent 2px 4px);border:1px solid var(--hol)"></i>Projected date</span>
+      <span><i class="sw" style="background:var(--closure)"></i>Office closure</span>
+      <span><i class="sw" style="background:var(--rest)"></i>Rest day</span>
+      <span><i class="sw" style="background:var(--al)"></i>Suggested break</span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card" aria-label="Calendar">
+      <div class="card-head">
+        <div class="nav" id="monthNav">
+          <button class="iconbtn" id="prevM" aria-label="Previous month">‹</button>
+          <h2 id="monthTitle">January</h2>
+          <button class="iconbtn" id="nextM" aria-label="Next month">›</button>
+        </div>
+        <div class="seg" role="group" aria-label="View">
+          <button id="vMonth" aria-pressed="true">Month</button>
+          <button id="vList" aria-pressed="false">All holidays</button>
+        </div>
+      </div>
+      <div id="calArea"></div>
+    </section>
+
+    <aside class="card" aria-label="Planner">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tPlan" aria-selected="true">Plan leave</button>
+        <button role="tab" id="tBridges" aria-selected="false">Best breaks</button>
+      </div>
+      <div id="paneArea"></div>
+    </aside>
+  </div>
+
+  <div class="foot">
+    <details open>
+      <summary>How each day is counted</summary>
+      <ol>
+        <li>Public holiday or in-lieu day: no leave.</li>
+        <li>Rest day under your work week: no leave.</li>
+        <li>Office closure: no leave, unless the closure is set to use annual leave. A closure that lands on a holiday or rest day never costs leave.</li>
+        <li>Any other day: one day of annual leave.</li>
+      </ol>
+      <p>In-lieu days are derived, not typed in. When a holiday falls on a rest day, the next working day that isn't already a holiday becomes the day in lieu. The rule per country is a setting in the Data tab. Your HR team sets this in data/settings.json to match company policy.</p>
+    </details>
+    <div>
+      <h3>About this data</h3>
+      <p id="aboutData">Holiday dates are maintained by your HR team and every change is recorded in the project’s history. Projected dates, usually those that depend on a moon sighting, show as hatched until they are confirmed and may still move. This planner doesn’t submit or approve leave, and it doesn’t know your leave balance. Apply through your company’s leave system.</p>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="engine/engine.js"></script>
+<script>
+(() => {
+'use strict';
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+function el(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (k === 'text') n.textContent = v;
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()){ if (c == null || c === false) continue; n.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return n;
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function sv(tag, attrs, ...kids){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const [k,v] of Object.entries(attrs||{})) if (v != null) n.setAttribute(k, v);
+  for (const c of kids) if (c != null) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+const pad = n => String(n).padStart(2,'0');
+const ds = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pd = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmt = (s, o={day:'numeric',month:'short'}) => pd(s).toLocaleDateString('en-GB', o);
+const fmtR = (a,b) => a===b ? fmt(a,{weekday:'short',day:'numeric',month:'short'}) : `${fmt(a,{weekday:'short',day:'numeric',month:'short'})} to ${fmt(b,{weekday:'short',day:'numeric',month:'short'})}`;
+const todayStr = ds(new Date());
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2600); }
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const lsSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+/* ---------- config ---------- */
+const PATTERNS = DaysOff.PATTERNS;
+const PATTERN_LABEL = { 'mon-fri':'Mon to Fri', 'mon-sat':'Mon to Sat', 'sun-thu':'Sun to Thu', 'tue-sat':'Tue to Sat' };
+const DEFAULT_PLACES = [
+  {code:'MY-KUL', label:'Kuala Lumpur', country:'MY'},
+  {code:'MY-SGR', label:'Selangor', country:'MY'},
+  {code:'SG', label:'Singapore', country:'SG'}
+];
+
+/* ---------- state ---------- */
+const prefs = lsGet('dop-prefs') || {};
+const S = {
+  place: prefs.place || 'MY-SGR', pattern: prefs.pattern || 'mon-fri', year: null, month: 0,
+  view:'month', tab:'plan', holidays:[], settings:null, log:[], loaded:false, dbState:'pending',
+  selStart:null, selEnd:null, pick:null, bridgeBudget: prefs.bridgeBudget || 3, annual: prefs.annual || 8,
+  db:null, user:null, uid:null, canWrite:false, plans:[], downloads:null, sample:null,
+  editing:null, importRows:null, importBusy:false
+};
+const savePrefs = () => lsSet('dop-prefs', {place:S.place, pattern:S.pattern, bridgeBudget:S.bridgeBudget, annual:S.annual});
+
+const places = () => (S.settings && Array.isArray(S.settings.places) && S.settings.places.length) ? S.settings.places : DEFAULT_PLACES;
+const placeObj = code => places().find(p=>p.code===code) || {code, label:code, country:code.split('-')[0]};
+const ruleFor = country => (S.settings && S.settings.rules && S.settings.rules[country]) || 'next-working';
+
+/* ---------- engine (engine/engine.js) ---------- */
+let CAL = null;
+function compute(){
+  const country = placeObj(S.place).country;
+  const c = DaysOff.buildCalendar({year:S.year, place:S.place, pattern:S.pattern, holidays:S.holidays, rule:ruleFor(country)});
+  const notBefore = S.year === new Date().getFullYear() ? todayStr : '';
+  c.hol = c.holidays;
+  c.bridges = DaysOff.findBreaks(c, S.bridgeBudget, notBefore);
+  c.plan = DaysOff.planYear(c.bridges, S.annual);
+  CAL = c;
+}
+const rangeStats = (a,b) => DaysOff.rangeStats(CAL, a, b);
+
+/* ---------- rendering: header & lede ---------- */
+function renderControls(){
+  const ps = $('place'); ps.replaceChildren(...places().map(p => el('option',{value:p.code, selected:p.code===S.place}, p.label)));
+  if (!places().some(p=>p.code===S.place)){ S.place = places()[0].code; ps.value = S.place; }
+  $('pattern').value = S.pattern;
+  const yrs = new Set(S.holidays.map(h=>+h.date.slice(0,4)));
+  const now = new Date().getFullYear(); yrs.add(now); yrs.add(now+1);
+  const ys = $('year'); ys.replaceChildren(...[...yrs].sort().map(y => el('option',{value:y, selected:y===S.year}, y)));
+}
+function renderLede(){
+  const lede = $('lede'), meta = $('meta'), p = placeObj(S.place);
+  if (!S.loaded){
+    lede.textContent = S.dbState === 'absent'
+      ? 'Holiday data couldn’t be loaded. If you opened this file straight from your computer, view it through GitHub Pages or a local web server instead.'
+      : 'Loading holidays…';
+    meta.textContent = ''; renderBudget(); return;
+  }
+  const yd = CAL.yearDays;
+  const ph = yd.filter(x=>x.type==='ph').length, sub = yd.filter(x=>x.type==='sub').length;
+  const proj = new Set(CAL.hol.filter(h=>h.date.startsWith(S.year+'-') && h.status==='projected').map(h=>h.date)).size;
+  lede.replaceChildren();
+  if (!ph){
+    lede.append(`No holidays are loaded for ${p.label} in ${S.year} yet. `, S.canWrite ? 'Add them under Manage data.' : 'Check back soon, or ask your HR team.');
+  } else {
+    lede.append(`Working ${PATTERN_LABEL[S.pattern]} in ${p.label}, ${S.year} gives you `,
+      el('strong',null,`${ph} public holiday${ph!==1?'s':''}`), ' and ',
+      el('strong',null,`${sub} day${sub!==1?'s':''} in lieu`), '. ');
+    if (CAL.plan.chosen.length){
+      lede.append('Use ', el('strong',null,`${CAL.plan.used} day${CAL.plan.used!==1?'s':''} of annual leave`),
+        ` on the ${CAL.plan.chosen.length} best long break${CAL.plan.chosen.length!==1?'s':''} and you’re off for `,
+        el('strong',null,`${CAL.plan.days} days`), ' in total.');
+    }
+  }
+  const unver = CAL.hol.filter(h=>h.date.startsWith(S.year+'-') && !h.verified).length;
+  renderBudget();
+  meta.replaceChildren(
+    proj ? `${proj} holiday date${proj!==1?'s are':' is'} still projected and may move. ` : 'All holiday dates are confirmed. ',
+    S.canWrite && unver ? el('span',{class:'warn'}, `${unver} row${unver!==1?'s':''} not yet checked against the gazette.`) : ''
+  );
+}
+function renderBudget(){
+  const b = $('budget'); if (!b) return;
+  if (!S.loaded || !CAL){ b.hidden = true; return; }
+  b.hidden = false;
+  b.replaceChildren(
+    el('label',{for:'alBudget'},'Leave days I’d like to use on long breaks',
+      el('input',{id:'alBudget',type:'number',min:1,max:40,value:S.annual,
+        onchange:e=>{ S.annual = Math.max(1,Math.min(40,Math.round(+e.target.value)||1)); savePrefs(); refresh(); }})),
+    el('p',{class:'hint'},'This isn’t your leave balance. It’s how many days you’d set aside for joining leave to holidays. The suggestions on the timeline and in Best breaks are built from it.'));
+}
+
+/* ---------- rendering: ribbon ---------- */
+function renderRibbon(){
+  const svg = $('ribbon'); svg.replaceChildren();
+  const W = 3, X0 = 14, base = 188;
+  const defs = sv('defs',{},
+    sv('pattern',{id:'hatch',width:4,height:4,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},
+      sv('rect',{width:2,height:4,fill:'var(--hol)'})));
+  svg.append(defs);
+  if (!CAL){ return; }
+  const yd = CAL.yearDays;
+  const H = {work:8, rest:20, closure:34, 'closure-al':34, sub:50, ph:66};
+  yd.forEach((x,i) => {
+    const h = H[x.type];
+    const fill = x.type==='ph' ? (x.projected?'url(#hatch)':'var(--hol)') : x.type==='sub' ? (x.projected?'url(#hatch)':'var(--sub)')
+      : x.type==='rest' ? 'var(--rest)' : x.type.startsWith('closure') ? 'var(--closure)' : 'var(--work)';
+    const label = [fmt(x.date,{weekday:'short',day:'numeric',month:'short'}),
+      ...x.ph.map(h=>h.name+(h.status==='projected'?' (projected)':'')),
+      ...x.sub.map(s=>'In lieu of '+(s.of?.name||'holiday')),
+      x.closure ? x.closure.name : null].filter(Boolean).join(' · ');
+    const r = sv('rect',{x:X0+i*W, y:base-h, width:W-0.6, height:h, rx:1, fill, stroke: x.projected?'var(--hol)':null, 'stroke-width':x.projected?0.6:null});
+    r.append(sv('title',{},label));
+    r.style.cursor='pointer';
+    r.addEventListener('click',()=>{ S.month = pd(x.date).getMonth(); S.view='month'; renderCal(); });
+    svg.append(r);
+  });
+  // months
+  for (let m=0;m<12;m++){
+    const i = yd.findIndex(x=>pd(x.date).getMonth()===m); if (i<0) continue;
+    svg.append(sv('line',{x1:X0+i*W-0.5,x2:X0+i*W-0.5,y1:base+2,y2:base+12,stroke:'var(--line)'}));
+    svg.append(sv('text',{x:X0+i*W+2,y:base+26,'font-size':12,'font-weight':700,fill: m===S.month?'var(--ink)':'var(--ink-2)','font-family':'Figtree, sans-serif'}, MONTHS[m].slice(0,3)));
+  }
+  // today
+  const ti = yd.findIndex(x=>x.date===todayStr);
+  if (ti>=0) svg.append(sv('line',{x1:X0+ti*W+1.5,x2:X0+ti*W+1.5,y1:40,y2:base+4,stroke:'var(--ink)','stroke-dasharray':'2 2'}));
+  // selection
+  if (S.selStart && S.selEnd){
+    const a = yd.findIndex(x=>x.date===S.selStart), b = yd.findIndex(x=>x.date===S.selEnd);
+    if (a>=0 && b>=0) svg.append(sv('rect',{x:X0+a*W, y:base+4, width:(b-a+1)*W-1, height:5, rx:2, fill:'var(--al)'}));
+  }
+  // arcs for the annual plan
+  const levels = [];
+  CAL.plan.chosen.forEach(b => {
+    const a = yd.findIndex(x=>x.date===b.start), e = yd.findIndex(x=>x.date===b.end);
+    const x1 = X0+a*W, x2 = X0+(e+1)*W-1, mid = (x1+x2)/2;
+    let lvl = 0; while (levels[lvl] != null && levels[lvl] > x1-30) lvl++; levels[lvl] = x2+24;
+    const top = 92 - lvl*30;
+    const g = sv('g',{class:'arc',tabindex:0,role:'button','aria-label':`${b.cost} day${b.cost!==1?'s':''} of leave for ${b.len} days off, ${fmtR(b.start,b.end)}`});
+    g.append(sv('rect',{x:x1-4,y:top-18,width:Math.max(x2-x1+8,44),height:base-70-top+20,fill:'transparent'}));
+    g.append(sv('path',{d:`M${x1} ${base-70} Q${mid} ${top-2} ${x2} ${base-70}`}));
+    g.append(sv('text',{x:Math.max(mid,18),y:top-4,'text-anchor':'middle'}, `${b.cost} → ${b.len}`));
+    g.append(sv('title',{},`${fmtR(b.start,b.end)}: ${b.cost} day${b.cost!==1?'s':''} of leave, ${b.len} days off`));
+    const go = () => selectRange(b.start,b.end,true);
+    g.addEventListener('click',go); g.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
+    svg.append(g);
+  });
+}
+
+/* ---------- rendering: calendar ---------- */
+function inSel(s){ return S.selStart && S.selEnd && s>=S.selStart && s<=S.selEnd; }
+function renderCal(){
+  $('vMonth').setAttribute('aria-pressed', S.view==='month'); $('vList').setAttribute('aria-pressed', S.view==='list');
+  $('monthNav').style.visibility = S.view==='month' ? 'visible' : 'hidden';
+  $('monthTitle').textContent = `${MONTHS[S.month]} ${S.year}`;
+  const area = $('calArea'); area.replaceChildren();
+  if (!CAL){ area.append(el('p',{class:'empty'},'Waiting for data.')); return; }
+  if (S.view==='list') return renderAgenda(area);
+  const grid = el('div',{class:'cal'});
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d=>grid.append(el('div',{class:'dow'},d)));
+  const first = new Date(S.year,S.month,1), off = (first.getDay()+6)%7, dim = new Date(S.year,S.month+1,0).getDate();
+  for (let i=0;i<off;i++) grid.append(el('div',{class:'cell out','aria-hidden':'true'}));
+  for (let d=1; d<=dim; d++){
+    const s = `${S.year}-${pad(S.month+1)}-${pad(d)}`, x = CAL.days.get(s);
+    const cls = ['cell']; if (x.rest) cls.push('rest'); if (s===todayStr) cls.push('today');
+    if (inSel(s)){ cls.push('sel'); if (x.cost) cls.push('cost'); }
+    if (S.pick===s) cls.push('sel');
+    const tags = [
+      ...x.ph.map(h=>el('span',{class:'tag '+(h.status==='projected'?'proj':'ph'),title:h.name+(h.status==='projected'?' (projected)':'')},h.name)),
+      ...x.sub.map(sb=>el('span',{class:'tag sub',title:'In lieu of '+(sb.of?.name||'')},'In lieu: '+(sb.of?.name||''))),
+      x.closure && !x.ph.length ? el('span',{class:'tag closure'}, x.closure.name + (x.closure.alCost?' (uses leave)':'')) : null
+    ];
+    const lab = `${fmt(s,{weekday:'long',day:'numeric',month:'long'})}${x.ph.length?', '+x.ph.map(h=>h.name).join(', '):''}`;
+    grid.append(el('button',{class:cls.join(' '),type:'button','aria-label':lab,onclick:()=>clickDay(s)},
+      el('span',{class:'n'},d), inSel(s)&&x.cost ? el('span',{class:'alpip'},'AL') : null, ...tags));
+  }
+  const tail = (7-((off+dim)%7))%7;
+  for (let i=0;i<tail;i++) grid.append(el('div',{class:'cell out','aria-hidden':'true'}));
+  area.append(grid);
+  area.append(el('p',{class:'hint',style:'padding:10px 18px'}, S.pick ? `Start set to ${fmt(S.pick,{day:'numeric',month:'short'})}. Tap the last day off.` : 'Tap a first day and a last day to plan a stretch of leave.'));
+}
+function renderAgenda(area){
+  const rows = [];
+  for (const x of CAL.yearDays){
+    for (const h of x.ph) rows.push({date:x.date, name:h.name, kind:h.status==='projected'?'p':'c', note:h.source||''});
+    for (const sb of x.sub) rows.push({date:x.date, name:'In lieu of '+(sb.of?.name||''), kind:'d', note:`Derived: ${fmt(sb.from)} falls on a rest day`});
+    if (x.closure) rows.push({date:x.date, name:x.closure.name, kind:'x', note:x.closure.alCost?'Uses a day of leave':'No leave needed'});
+  }
+  if (!rows.length){ area.append(el('p',{class:'empty'},'No holidays loaded for this place and year.')); return; }
+  const label = {c:'Confirmed',p:'Projected',d:'In lieu',x:'Closure'};
+  area.append(el('ul',{class:'agenda'}, rows.map(r => el('li',null,
+    el('div',{class:'d'}, pd(r.date).getDate(), el('small',null, fmt(r.date,{month:'short',weekday:'short'}))),
+    el('div',null, el('div',{class:'nm'},r.name), r.note ? el('div',{class:'sub2'},r.note) : null),
+    el('span',{class:'pill '+r.kind}, label[r.kind])))));
+}
+function clickDay(s){
+  if (!S.pick){ S.pick = s; S.selStart = S.selEnd = null; }
+  else { const a = S.pick < s ? S.pick : s, b = S.pick < s ? s : S.pick; S.pick = null; selectRange(a,b,false); return; }
+  S.tab='plan'; renderAll();
+}
+function selectRange(a,b,jump){
+  S.selStart=a; S.selEnd=b; S.pick=null; S.tab='plan';
+  if (jump){ S.month = pd(a).getMonth(); S.view='month'; }
+  renderAll();
+}
+
+/* ---------- rendering: side panel ---------- */
+function renderPane(){
+  for (const [id,t] of [['tPlan','plan'],['tBridges','bridges']]) $(id).setAttribute('aria-selected', S.tab===t);
+  const area = $('paneArea'); area.replaceChildren();
+  const pane = el('div',{class:'pane',role:'tabpanel'});
+  if (S.tab==='bridges') paneBridges(pane); else paneToPlan(pane);
+  area.append(pane);
+}
+function paneToPlan(p){
+  const minD = `${S.year}-01-01`, maxD = `${S.year+1}-01-31`;
+  const sIn = el('input',{type:'date',min:minD,max:maxD,value:S.selStart||'',onchange:e=>{S.selStart=e.target.value||null; if(S.selEnd && S.selStart>S.selEnd) S.selEnd=S.selStart; renderAll();}});
+  const eIn = el('input',{type:'date',min:S.selStart||minD,max:maxD,value:S.selEnd||'',onchange:e=>{S.selEnd=e.target.value||null; renderAll();}});
+  p.append(el('div',{class:'row2'}, el('label',{class:'ctl'},'First day off',sIn), el('label',{class:'ctl'},'Last day off',eIn)));
+  if (S.selStart && S.selEnd && CAL){
+    const r = rangeStats(S.selStart,S.selEnd);
+    p.append(el('div',{class:'result'},
+      el('div',{class:'big'}, r.al), el('p',null, el('strong',null,`day${r.al!==1?'s':''} of annual leave`), ` for ${r.total} consecutive day${r.total!==1?'s':''} off.`),
+      el('div',{class:'breakdown'},
+        r.ph?el('span',null,`${r.ph} holiday${r.ph!==1?'s':''}`):null, r.sub?el('span',null,`${r.sub} in lieu`):null,
+        r.rest?el('span',null,`${r.rest} rest day${r.rest!==1?'s':''}`):null, r.closure?el('span',null,`${r.closure} closure`):null),
+      r.missing ? el('p',{class:'hint'},`${r.missing} day${r.missing!==1?'s':''} fall outside the loaded data and are counted as normal working days.`) : null));
+    const btns = el('div',{class:'btnrow'},
+      el('button',{class:'btn',onclick:()=>{S.selStart=S.selEnd=null;S.pick=null;renderAll();}},'Clear'),
+      el('button',{class:'btn primary',onclick:()=>savePlan(r)},'Save plan'),
+      el('button',{class:'btn',onclick:()=>exportPlanIcs(r)},'Add to calendar'));
+    p.append(btns);
+    const applyUrl = S.settings && typeof S.settings.applyUrl==='string' && /^https:\/\//.test(S.settings.applyUrl) ? S.settings.applyUrl : null;
+    p.append(applyUrl
+      ? el('a',{class:'btn primary',href:applyUrl,target:'_blank',rel:'noopener',style:'text-align:center;text-decoration:none'},`Apply for ${r.al} day${r.al!==1?'s':''} of leave`)
+      : el('p',{class:'hint'},'When you’re happy with the dates, apply through your company’s leave system.'));
+  } else {
+    p.append(el('p',{class:'hint'},'Pick dates here, tap two days on the calendar, or choose a suggested break on the timeline.'));
+  }
+  {
+    p.append(el('h3',null,'Your saved plans'));
+    const mine = S.plans.filter(x=>x.start.startsWith(S.year+'-') || x.end.startsWith(S.year+'-'));
+    if (!mine.length) p.append(el('p',{class:'hint'},'Plans you save stay on this device and browser only.'));
+    else p.append(el('ul',{class:'bridges'}, mine.map(pl => el('li',null, el('button',{onclick:()=>{ if(pl.place!==S.place||pl.pattern!==S.pattern){S.place=pl.place;S.pattern=pl.pattern;savePrefs();} refresh(); selectRange(pl.start,pl.end,true);} },
+      el('span',{class:'ratio'},`${pl.al} → ${pl.total}`), el('span',{class:'when'},fmtR(pl.start,pl.end)),
+      el('span',{class:'why'},`${placeObj(pl.place).label}, ${PATTERN_LABEL[pl.pattern]||pl.pattern}`))))));
+    if (mine.length) p.append(el('button',{class:'btn danger',onclick:clearPlans},'Delete saved plans for '+S.year));
+  }
+  if (CAL && CAL.hol.length) p.append(el('button',{class:'btn',onclick:exportHolidaysIcs},`Download ${S.year} holidays for your calendar`));
+}
+function paneBridges(p){
+  p.append(el('label',{class:'ctl'},'Most leave days for a single break',
+    el('select',{onchange:e=>{S.bridgeBudget=+e.target.value;savePrefs();refresh();}},
+      [1,2,3,4,5].map(n=>el('option',{value:n,selected:n===S.bridgeBudget},`${n} day${n!==1?'s':''}`)))));
+  if (!CAL || !CAL.bridges.length){ p.append(el('p',{class:'hint'},'No breaks found for these settings. Try a higher limit, or check that holidays are loaded for your location.')); return; }
+  const planned = new Set(CAL.plan.chosen.map(b=>b.start));
+  p.append(el('p',{class:'hint'},`Ranked by days off for each day of leave. “1 → 4” means one day of leave gets you four days off. Ones marked “suggested for you” fit the ${S.annual} leave days you set aside.`));
+  p.append(el('ul',{class:'bridges'}, CAL.bridges.slice(0,14).map(b => el('li',null,
+    el('button',{onclick:()=>selectRange(b.start,b.end,true)},
+      el('span',{class:'ratio'},`${b.cost} → ${b.len}`),
+      el('span',{class:'when'}, fmtR(b.start,b.end)),
+      el('span',{class:'why'}, [b.names.join(', ') || 'Office closure', b.projected?'includes a projected date':null, planned.has(b.start)?'suggested for you':null].filter(Boolean).join('. ')))))));
+}
+
+/* ---------- saved plans (this browser only) ---------- */
+function loadPlans(){ const v = lsGet('dop-plans'); S.plans = Array.isArray(v) ? v : []; }
+function savePlan(r){
+  const plan = {id:Date.now().toString(36), start:S.selStart, end:S.selEnd, place:S.place, pattern:S.pattern, al:r.al, total:r.total, savedAt:new Date().toISOString()};
+  S.plans = [plan, ...S.plans].slice(0,60); lsSet('dop-plans', S.plans); toast('Plan saved on this device'); renderPane();
+}
+function clearPlans(){
+  if (!confirm(`Delete your saved plans for ${S.year}?`)) return;
+  S.plans = S.plans.filter(x=>!(x.start.startsWith(S.year+'-')||x.end.startsWith(S.year+'-'))); lsSet('dop-plans', S.plans); toast('Deleted'); renderPane();
+}
+
+/* ---------- calendar export ---------- */
+function icsEvent(date, endExclusive, summary, desc){
+  const esc = s => String(s).replace(/[\\;,]/g, m=>'\\'+m).replace(/\n/g,'\\n');
+  const uid = `${date}-${slug(summary)}@days-off`;
+  return ['BEGIN:VEVENT',`UID:${uid}`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').slice(0,15)}Z`,
+    `DTSTART;VALUE=DATE:${date.replace(/-/g,'')}`,`DTEND;VALUE=DATE:${endExclusive.replace(/-/g,'')}`,
+    `SUMMARY:${esc(summary)}`, desc?`DESCRIPTION:${esc(desc)}`:null,'TRANSP:TRANSPARENT','END:VEVENT'].filter(Boolean).join('\r\n');
+}
+const wrapIcs = ev => ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Days off planned//EN','CALSCALE:GREGORIAN',...ev,'END:VCALENDAR'].join('\r\n');
+function saveFile(filename, data){
+  const url = URL.createObjectURL(new Blob([data], {type:'text/calendar'}));
+  const a = el('a',{href:url, download:filename}); document.body.append(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+function exportHolidaysIcs(){
+  const ev = [];
+  for (const x of CAL.yearDays){
+    for (const h of x.ph) ev.push(icsEvent(x.date, ds(addD(pd(x.date),1)), h.name + (h.status==='projected'?' (projected)':''), h.source||''));
+    for (const sb of x.sub) ev.push(icsEvent(x.date, ds(addD(pd(x.date),1)), 'In lieu of '+(sb.of?.name||'holiday'), 'Derived day in lieu'));
+  }
+  saveFile(`holidays-${S.place}-${S.year}.ics`, wrapIcs(ev));
+}
+function exportPlanIcs(r){
+  saveFile(`leave-${S.selStart}.ics`, wrapIcs([icsEvent(S.selStart, ds(addD(pd(S.selEnd),1)), `Leave: ${r.al} AL, ${r.total} days off`, `Planned in Days off, planned for ${placeObj(S.place).label}`)]));
+}
+
+/* ---------- wiring ---------- */
+function refresh(){ if (S.loaded) compute(); renderAll(); }
+function renderAll(){ renderControls(); renderLede(); renderRibbon(); renderCal(); renderPane(); }
+$('place').addEventListener('change',e=>{S.place=e.target.value;S.editing=null;savePrefs();refresh();});
+$('pattern').addEventListener('change',e=>{S.pattern=e.target.value;savePrefs();refresh();});
+$('year').addEventListener('change',e=>{S.year=+e.target.value;S.selStart=S.selEnd=S.pick=null;S.month=0;refresh();});
+$('prevM').addEventListener('click',()=>{S.month=(S.month+11)%12;renderAll();});
+$('nextM').addEventListener('click',()=>{S.month=(S.month+1)%12;renderAll();});
+$('vMonth').addEventListener('click',()=>{S.view='month';renderCal();});
+$('vList').addEventListener('click',()=>{S.view='list';renderCal();});
+$('tPlan').addEventListener('click',()=>{S.tab='plan';renderPane();});
+$('tBridges').addEventListener('click',()=>{S.tab='bridges';renderPane();});
+
+function pickDefaultYear(){
+  if (S.year) return;
+  const now = new Date().getFullYear();
+  const yrs = [...new Set(S.holidays.map(h=>+h.date.slice(0,4)))].sort();
+  S.year = yrs.find(y=>y>=now && S.holidays.some(h=>h.date.startsWith(y+'-') && h.places?.includes(S.place) && h.date>=todayStr)) || yrs.find(y=>y>=now) || now;
+  S.month = S.year===now ? new Date().getMonth() : 0;
+}
+
+S.year = null; pickDefaultYear(); renderAll();
+
+async function boot(){
+  loadPlans();
+  try {
+    const [h, st] = await Promise.all([
+      fetch('data/holidays.json', {cache:'no-cache'}).then(r=>{ if(!r.ok) throw 0; return r.json(); }),
+      fetch('data/settings.json', {cache:'no-cache'}).then(r=>r.ok ? r.json() : null).catch(()=>null)
+    ]);
+    S.holidays = (h.holidays||[]).filter(x=>x && typeof x.date==='string');
+    S.settings = st;
+    S.loaded = true; S.year = null; pickDefaultYear(); refresh();
+  } catch(e){ S.dbState='absent'; renderAll(); }
+}
+boot();
+})();
+</script>
+</body>
+</html>

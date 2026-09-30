@@ -1,0 +1,24 @@
+{
+  "places": [
+    {
+      "code": "MY-KUL",
+      "label": "Kuala Lumpur",
+      "country": "MY"
+    },
+    {
+      "code": "MY-SGR",
+      "label": "Selangor",
+      "country": "MY"
+    },
+    {
+      "code": "SG",
+      "label": "Singapore",
+      "country": "SG"
+    }
+  ],
+  "rules": {
+    "MY": "next-working",
+    "SG": "next-working"
+  },
+  "applyUrl": ""
+}

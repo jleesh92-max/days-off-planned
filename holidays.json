@@ -1,0 +1,411 @@
+{
+  "holidays": [
+    {
+      "id": "2027-01-01-new-year-s-day-my-kul-my-sgr",
+      "date": "2027-01-01",
+      "name": "New Year's Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-01-22-thaipusam-my-kul-my-sgr",
+      "date": "2027-01-22",
+      "name": "Thaipusam",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-01-federal-territory-day-my-kul",
+      "date": "2027-02-01",
+      "name": "Federal Territory Day",
+      "places": [
+        "MY-KUL"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-06-chinese-new-year-my-kul-my-sgr",
+      "date": "2027-02-06",
+      "name": "Chinese New Year",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-07-chinese-new-year-second-day-my-kul-my-sgr",
+      "date": "2027-02-07",
+      "name": "Chinese New Year (second day)",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-24-nuzul-al-quran-my-kul-my-sgr",
+      "date": "2027-02-24",
+      "name": "Nuzul Al-Quran",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-03-10-hari-raya-aidilfitri-my-kul-my-sgr",
+      "date": "2027-03-10",
+      "name": "Hari Raya Aidilfitri",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "projected",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-03-11-hari-raya-aidilfitri-second-day-my-kul-my-sgr",
+      "date": "2027-03-11",
+      "name": "Hari Raya Aidilfitri (second day)",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "projected",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-01-labour-day-my-kul-my-sgr",
+      "date": "2027-05-01",
+      "name": "Labour Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-17-hari-raya-haji-my-kul-my-sgr",
+      "date": "2027-05-17",
+      "name": "Hari Raya Haji",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "projected",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-20-wesak-day-my-kul-my-sgr",
+      "date": "2027-05-20",
+      "name": "Wesak Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-06-06-awal-muharram-my-kul-my-sgr",
+      "date": "2027-06-06",
+      "name": "Awal Muharram",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-06-07-agong-s-birthday-my-kul-my-sgr",
+      "date": "2027-06-07",
+      "name": "Agong's Birthday",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-08-15-maulidur-rasul-my-kul-my-sgr",
+      "date": "2027-08-15",
+      "name": "Maulidur Rasul",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-08-31-merdeka-day-my-kul-my-sgr",
+      "date": "2027-08-31",
+      "name": "Merdeka Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-09-16-malaysia-day-my-kul-my-sgr",
+      "date": "2027-09-16",
+      "name": "Malaysia Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-10-28-deepavali-my-kul-my-sgr",
+      "date": "2027-10-28",
+      "name": "Deepavali",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-12-11-sultan-of-selangor-s-birthday-my-sgr",
+      "date": "2027-12-11",
+      "name": "Sultan of Selangor's Birthday",
+      "places": [
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-12-25-christmas-day-my-kul-my-sgr",
+      "date": "2027-12-25",
+      "name": "Christmas Day",
+      "places": [
+        "MY-KUL",
+        "MY-SGR"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-01-01-new-year-s-day-sg",
+      "date": "2027-01-01",
+      "name": "New Year's Day",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-06-chinese-new-year-sg",
+      "date": "2027-02-06",
+      "name": "Chinese New Year",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-02-07-chinese-new-year-second-day-sg",
+      "date": "2027-02-07",
+      "name": "Chinese New Year (second day)",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-03-10-hari-raya-puasa-sg",
+      "date": "2027-03-10",
+      "name": "Hari Raya Puasa",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "projected",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-03-26-good-friday-sg",
+      "date": "2027-03-26",
+      "name": "Good Friday",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-01-labour-day-sg",
+      "date": "2027-05-01",
+      "name": "Labour Day",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-17-hari-raya-haji-sg",
+      "date": "2027-05-17",
+      "name": "Hari Raya Haji",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-05-20-vesak-day-sg",
+      "date": "2027-05-20",
+      "name": "Vesak Day",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-08-09-national-day-sg",
+      "date": "2027-08-09",
+      "name": "National Day",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-10-28-deepavali-sg",
+      "date": "2027-10-28",
+      "name": "Deepavali",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    },
+    {
+      "id": "2027-12-25-christmas-day-sg",
+      "date": "2027-12-25",
+      "name": "Christmas Day",
+      "places": [
+        "SG"
+      ],
+      "kind": "public",
+      "status": "confirmed",
+      "alCost": 0,
+      "verified": false,
+      "source": "Starter data, check against the official gazette"
+    }
+  ]
+}
